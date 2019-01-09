@@ -1,0 +1,160 @@
+---
+title: Scraping the Web without Learning HTML
+author: Letisha Smith
+date: '2019-01-05'
+categories:
+  - Tutorial
+slug: scraping-the-web-without-learning-html
+featuredImage: ![](/post/2018-12-24-scraping-the-web-without-learning-html_files/featured.png
+  caption: ''
+  focal_point: ''
+---
+
+
+
+<p>Last year was a whirlwind full of exciting opportunities to travel and share my dual passions of food and statistics. When I resolved to eat healthier, my inner quant couldn’t resist the opportunity of using data to better achieve this goal. Therefore, I applied unsupervised machine learning to ease meal prep by grouping together recipes that shared similar ingredients. My data came from ingredients used in dishes uploaded to allrecipes.com, which as of May 2018 contained over 14,000 main meal dishes.</p>
+<p>So, there was a lot of interest in how I collected this data–like the following text message:</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/01-text.png" style="width:50.0%" style="height:50.0%" />
+
+</div>
+<p>This article is me keeping true to my word, though I am actually dividing the topic into more than one post. Here will cover web scraping essentials with the rvest package in R, then I will follow-up with a post on using functional programming to scrape multiple pages.</p>
+<div id="what-is-web-scraping" class="section level3">
+<h3>What is web scraping</h3>
+<p>A website is essentially a collection of archived information–which incidentally makes it a rich data source. Headlines, comments, and metrics, like the weather, are stored on a site and can be gathered to respectively get a sense of newsworthy topics, opinions, and trends over time.</p>
+<p>This data must be extracted from the site into an analyzable format. Rather than copy and paste information, web scraping can be used to directly accumulate content from a website.</p>
+</div>
+<div id="how-does-web-scraping-work" class="section level3">
+<h3>How does web scraping work</h3>
+<p>A webpage can be uniquely identified by its URL (Uniform Resource Locator) , which is also associated with an HTML (Hypertext Markup Language) file. HTML files provide guidelines for producing content on a webpage, and you can always view the HTML document used to generate a webpage by right-clicking and selecting <code>View Page Source</code>.</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/02-main_dish.png" />
+
+</div>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/03-view_source.png" />
+
+</div>
+<p>If you are using a Google Chrome web browser, then a right-click and selection of <code>Inspect</code> opens the HTML document in the same window as the webpage. Hovering over the HTML will highlight corresponding portions on the page. If you desire to highlight a more granular piece of information on the web page, you can attempt to accomplish this by hovering over a line of HTML and clicking on the left triangular icon to drill down into the text.</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/04-inspect.png" />
+
+</div>
+<p>You don’t need to be fluent in HTML in order to webscrape. Just know that the information you want to analyze on a site is stored in an html file, and web scraping can be used to collect this information.</p>
+</div>
+<div id="using-patterns-to-extract-information" class="section level3">
+<h3>Using patterns to extract information</h3>
+<p>HTML helps to organize a page by indicating how text should be displayed–for instance in a header, list, or certain division of the page. Categorically similar information tends to be visually alike, making a website easier to navigate. For example, recipe ingredients may be presented as a list and stylized with a font or color to be distinguished from recipe instructions. Stylistic patterns designed to ease user experience can be exploited to easily detect and collect information of interest from a website.</p>
+<p>While HTML is responsible for structuring content on a webpage, CSS (Cascading Style Sheets) controls site aesthetics, like color scheme and fonts. Therefore, extracting categorically similar information from a site is easier if you know the HTML and CSS used to format the content.</p>
+<ul>
+<li>While HTML is responsible for structuring content on a webpage, CSS (Cascading Style Sheets) controls site aesthetics, like color scheme and fonts. Therefore, extracting categorically similar information from a site is <strong><em>easier</em></strong> if you know the HTML and CSS used to format the content.</li>
+</ul>
+<p>You can figure out the HTML and CSS specifications for displaying content with the <a href="https://www.google.com/chrome/">Google Chrome</a> plugin Selector Gadget. Download Google Chrome if you haven’t already, and install the <a href="https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb">Selector Gadget Extension</a>.</p>
+<p>Here is Selector Gadget’s description of itself:</p>
+<blockquote>
+<p>Selector Gadget is an open source Chrome Extension that makes CSS selector generation and discovery on complicated sites a breeze.</p>
+</blockquote>
+<p>After installing the extension, go to any page and launch it. A box will open in the bottom right of the website. Click on a page element that you would like your selector to match (it will turn green). SelectorGadget will then generate a minimal CSS selector for that element, and will highlight (yellow) everything that is matched by the selector. Now click on a highlighted element to remove it from the selector (red), or click on an unhighlighted element to add it to the selector. Through this process of selection and rejection, SelectorGadget helps you come up with the perfect CSS selector for your needs.</p>
+<p>After Selector Gadget has been downloaded, click on the Selector Gadget icon in the toolbar to enable it.</p>
+<p>If I wanted to know the HTML/CSS associated with recipe ingredients on allrecipes.com, then clicking on one ingredient highlights it in green and other text with identical HTML/CSS in yellow.</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/05-selectora.png" />
+
+</div>
+<p>If the yellow encompasses information that is categorically dissimilar from what you want, then click on the extraneous region and the yellow will turn red. Repeatedly deselect areas until the only information that you want is highlighted in yellow.</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/06-selectorb.png" />
+
+</div>
+<p>The css selector refers to HTML/CSS pattern used to format the text, and it can be found in the bottom right corner of the web browser. The css selector for ingredients is <code>.recipe-print__container2 ul li</code>.</p>
+</div>
+<div id="but-what-does-this-have-to-do-with-r" class="section level3">
+<h3>But what does this have to do with R?</h3>
+<p>R has a package called rvest that is able to scrape data from a webpage if you provide it with the page’s URL and the relevant css selector.</p>
+<p>Download R and preferably the RStudio IDE–if you haven’t already.</p>
+<p>Then, install Rvest</p>
+<pre class="r"><code>install.packages(&quot;rvest&quot;)</code></pre>
+<pre class="r"><code># load package
+library(rvest)</code></pre>
+<pre><code>## Loading required package: xml2</code></pre>
+<pre class="r"><code># load tidyvers to gain access to the pipe %&gt;% function
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ──────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.0.0     ✔ purrr   0.2.4
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.5
+## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
+<pre><code>## ── Conflicts ─────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter()         masks stats::filter()
+## ✖ readr::guess_encoding() masks rvest::guess_encoding()
+## ✖ dplyr::lag()            masks stats::lag()
+## ✖ purrr::pluck()          masks rvest::pluck()</code></pre>
+<p>First, store the url to a variable</p>
+<pre class="r"><code>web_address &lt;- &quot;https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/print/?recipeType=Recipe&amp;servings=12&amp;isMetric=false&quot;</code></pre>
+<p>Please note, that I chose to scrape ingredients from a print view of the recipe and that the URL is for this page. I chose to capture the css selector from this version of allrecipes.com because the print layout is minimal with less irrelevant information.</p>
+<p>To scrape the data we will start with 2 functions</p>
+<ul>
+<li><p>read_html() to prepare the html for data extraction</p></li>
+<li><p>html_nodes() to extract data that matches the named css selector</p></li>
+</ul>
+<pre class="r"><code>ingredients &lt;- read_html(web_address) %&gt;% 
+html_nodes(&quot;.recipe-print__container2 ul li&quot;)</code></pre>
+<p>This output is a bit messy because it contains some of the HTML, so one more function is needed to simplify the output</p>
+<ul>
+<li>html_text() reduces output to only show content</li>
+</ul>
+<pre class="r"><code>read_html(web_address) %&gt;% 
+html_nodes(&quot;.recipe-print__container2 ul li&quot;) %&gt;% 
+html_text(trim = T) </code></pre>
+<pre><code>##  [1] &quot;1 pound sweet Italian sausage&quot;         
+##  [2] &quot;3/4 pound lean ground beef&quot;            
+##  [3] &quot;1/2 cup minced onion&quot;                  
+##  [4] &quot;2 cloves garlic, crushed&quot;              
+##  [5] &quot;1 (28 ounce) can crushed tomatoes&quot;     
+##  [6] &quot;2 (6 ounce) cans tomato paste&quot;         
+##  [7] &quot;2 (6.5 ounce) cans canned tomato sauce&quot;
+##  [8] &quot;1/2 cup water&quot;                         
+##  [9] &quot;2 tablespoons white sugar&quot;             
+## [10] &quot;1 1/2 teaspoons dried basil leaves&quot;    
+## [11] &quot;1/2 teaspoon fennel seeds&quot;             
+## [12] &quot;1 teaspoon Italian seasoning&quot;          
+## [13] &quot;1 tablespoon salt&quot;                     
+## [14] &quot;1/4 teaspoon ground black pepper&quot;      
+## [15] &quot;4 tablespoons chopped fresh parsley&quot;   
+## [16] &quot;12 lasagna noodles&quot;                    
+## [17] &quot;16 ounces ricotta cheese&quot;              
+## [18] &quot;1 egg&quot;                                 
+## [19] &quot;1/2 teaspoon salt&quot;                     
+## [20] &quot;3/4 pound mozzarella cheese, sliced&quot;   
+## [21] &quot;3/4 cup grated Parmesan cheese&quot;</code></pre>
+<p>Try changing the URL assigned to the web_address variable to see that this css selector can be used to extract ingredient information from any recipe page that is formatted for printing.</p>
+<p>Here are a few for you to get started with <a href="https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/print/?recipeType=Recipe&amp;servings=24&amp;isMetric=false" class="uri">https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/print/?recipeType=Recipe&amp;servings=24&amp;isMetric=false</a></p>
+<p><a href="https://www.allrecipes.com/recipe/15925/creamy-au-gratin-potatoes/print/?recipeType=Recipe&amp;servings=4&amp;isMetric=false" class="uri">https://www.allrecipes.com/recipe/15925/creamy-au-gratin-potatoes/print/?recipeType=Recipe&amp;servings=4&amp;isMetric=false</a></p>
+<p>Bon Appetit!</p>
+<div id="resources" class="section level4">
+<h4>Resources</h4>
+<ul>
+<li>Web Browsers
+<ul>
+<li><a href="https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm" class="uri">https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm</a><br />
+</li>
+<li><a href="https://www.explainthatstuff.com/howthewebworks.html" class="uri">https://www.explainthatstuff.com/howthewebworks.html</a><br />
+</li>
+<li><a href="https://www.w3.org/TR/html401/intro/intro.html" class="uri">https://www.w3.org/TR/html401/intro/intro.html</a></li>
+</ul></li>
+<li>HTML
+<ul>
+<li><a href="https://www.quora.com/What-are-the-differences-between-HTML-XML-PHP-CSS-and-JavaScript-in-layman%E2%80%99s-terms-Is-it-possible-to-write-a-complex-website-code-successfully-by-using-just-1-of-those-languages">https://www.quora.com/What-are-the-differences-between-HTML-XML-PHP-CSS-and-JavaScript-in-layman%E2%80%99s-terms-Is-it-possible-to-write-a-complex-website-code-successfully-by-using-just-1-of-those-languages</a><br />
+</li>
+<li><a href="https://www.johnhaydon.com/whats-difference-between-css-html-php/" class="uri">https://www.johnhaydon.com/whats-difference-between-css-html-php/</a></li>
+</ul></li>
+<li>Selector Gadge + Rvest
+<ul>
+<li><a href="https://www.rstudio.com/resources/webinars/extracting-data-from-the-web-part-2/" class="uri">https://www.rstudio.com/resources/webinars/extracting-data-from-the-web-part-2/</a><br />
+</li>
+<li><a href="https://blog.rstudio.com/2014/11/24/rvest-easy-web-scraping-with-r/" class="uri">https://blog.rstudio.com/2014/11/24/rvest-easy-web-scraping-with-r/</a></li>
+<li><a href="https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html" class="uri">https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html</a></li>
+</ul></li>
+</ul>
+</div>
+</div>

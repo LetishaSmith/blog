@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cooking Up Statistics on Cooking Up Statistics</title>
+    <link>/</link>
+    <description>Recent content in Cooking Up Statistics on Cooking Up Statistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&amp;copy; 2018</copyright>
+    <lastBuildDate>Sun, 15 Oct 2017 00:00:00 -0400</lastBuildDate>
+    <atom:link href="/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Scraping the Web without Learning HTML</title>
+      <link>/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/</guid>
+      <description>
+
+
+&lt;p&gt;Last year was a whirlwind full of exciting opportunities to travel and share my dual passions of food and statistics. When I resolved to eat healthier, my inner quant couldn’t resist the opportunity of using data to better achieve this goal. Therefore, I applied unsupervised machine learning to ease meal prep by grouping together recipes that shared similar ingredients. My data came from ingredients used in dishes uploaded to allrecipes.com, which as of May 2018 contained over 14,000 main meal dishes.&lt;/p&gt;
+&lt;p&gt;So, there was a lot of interest in how I collected this data–like the following text message:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/01-text.png&#34; style=&#34;width:50.0%&#34; style=&#34;height:50.0%&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;This article is me keeping true to my word, though I am actually dividing the topic into more than one post. Here will cover web scraping essentials with the rvest package in R, then I will follow-up with a post on using functional programming to scrape multiple pages.&lt;/p&gt;
+&lt;div id=&#34;what-is-web-scraping&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;What is web scraping&lt;/h3&gt;
+&lt;p&gt;A website is essentially a collection of archived information–which incidentally makes it a rich data source. Headlines, comments, and metrics, like the weather, are stored on a site and can be gathered to respectively get a sense of newsworthy topics, opinions, and trends over time.&lt;/p&gt;
+&lt;p&gt;This data must be extracted from the site into an analyzable format. Rather than copy and paste information, web scraping can be used to directly accumulate content from a website.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;how-does-web-scraping-work&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;How does web scraping work&lt;/h3&gt;
+&lt;p&gt;A webpage can be uniquely identified by its URL (Uniform Resource Locator) , which is also associated with an HTML (Hypertext Markup Language) file. HTML files provide guidelines for producing content on a webpage, and you can always view the HTML document used to generate a webpage by right-clicking and selecting &lt;code&gt;View Page Source&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/02-main_dish.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/03-view_source.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;If you are using a Google Chrome web browser, then a right-click and selection of &lt;code&gt;Inspect&lt;/code&gt; opens the HTML document in the same window as the webpage. Hovering over the HTML will highlight corresponding portions on the page. If you desire to highlight a more granular piece of information on the web page, you can attempt to accomplish this by hovering over a line of HTML and clicking on the left triangular icon to drill down into the text.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/04-inspect.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;You don’t need to be fluent in HTML in order to webscrape. Just know that the information you want to analyze on a site is stored in an html file, and web scraping can be used to collect this information.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-patterns-to-extract-information&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Using patterns to extract information&lt;/h3&gt;
+&lt;p&gt;HTML helps to organize a page by indicating how text should be displayed–for instance in a header, list, or certain division of the page. Categorically similar information tends to be visually alike, making a website easier to navigate. For example, recipe ingredients may be presented as a list and stylized with a font or color to be distinguished from recipe instructions. Stylistic patterns designed to ease user experience can be exploited to easily detect and collect information of interest from a website.&lt;/p&gt;
+&lt;p&gt;While HTML is responsible for structuring content on a webpage, CSS (Cascading Style Sheets) controls site aesthetics, like color scheme and fonts. Therefore, extracting categorically similar information from a site is easier if you know the HTML and CSS used to format the content.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;While HTML is responsible for structuring content on a webpage, CSS (Cascading Style Sheets) controls site aesthetics, like color scheme and fonts. Therefore, extracting categorically similar information from a site is &lt;strong&gt;&lt;em&gt;easier&lt;/em&gt;&lt;/strong&gt; if you know the HTML and CSS used to format the content.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can figure out the HTML and CSS specifications for displaying content with the &lt;a href=&#34;https://www.google.com/chrome/&#34;&gt;Google Chrome&lt;/a&gt; plugin Selector Gadget. Download Google Chrome if you haven’t already, and install the &lt;a href=&#34;https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb&#34;&gt;Selector Gadget Extension&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Here is Selector Gadget’s description of itself:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Selector Gadget is an open source Chrome Extension that makes CSS selector generation and discovery on complicated sites a breeze.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;After installing the extension, go to any page and launch it. A box will open in the bottom right of the website. Click on a page element that you would like your selector to match (it will turn green). SelectorGadget will then generate a minimal CSS selector for that element, and will highlight (yellow) everything that is matched by the selector. Now click on a highlighted element to remove it from the selector (red), or click on an unhighlighted element to add it to the selector. Through this process of selection and rejection, SelectorGadget helps you come up with the perfect CSS selector for your needs.&lt;/p&gt;
+&lt;p&gt;After Selector Gadget has been downloaded, click on the Selector Gadget icon in the toolbar to enable it.&lt;/p&gt;
+&lt;p&gt;If I wanted to know the HTML/CSS associated with recipe ingredients on allrecipes.com, then clicking on one ingredient highlights it in green and other text with identical HTML/CSS in yellow.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/05-selectora.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;If the yellow encompasses information that is categorically dissimilar from what you want, then click on the extraneous region and the yellow will turn red. Repeatedly deselect areas until the only information that you want is highlighted in yellow.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/06-selectorb.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;The css selector refers to HTML/CSS pattern used to format the text, and it can be found in the bottom right corner of the web browser. The css selector for ingredients is &lt;code&gt;.recipe-print__container2 ul li&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;but-what-does-this-have-to-do-with-r&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;But what does this have to do with R?&lt;/h3&gt;
+&lt;p&gt;R has a package called rvest that is able to scrape data from a webpage if you provide it with the page’s URL and the relevant css selector.&lt;/p&gt;
+&lt;p&gt;Download R and preferably the RStudio IDE–if you haven’t already.&lt;/p&gt;
+&lt;p&gt;Then, install Rvest&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;rvest&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load package
+library(rvest)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: xml2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load tidyvers to gain access to the pipe %&amp;gt;% function
+library(tidyverse)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ── Attaching packages ──────────────────── tidyverse 1.2.1 ──&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ✔ ggplot2 3.0.0     ✔ purrr   0.2.4
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.5
+## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+## ✔ readr   1.1.1     ✔ forcats 0.3.0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ── Conflicts ─────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter()         masks stats::filter()
+## ✖ readr::guess_encoding() masks rvest::guess_encoding()
+## ✖ dplyr::lag()            masks stats::lag()
+## ✖ purrr::pluck()          masks rvest::pluck()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;First, store the url to a variable&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;web_address &amp;lt;- &amp;quot;https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/print/?recipeType=Recipe&amp;amp;servings=12&amp;amp;isMetric=false&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Please note, that I chose to scrape ingredients from a print view of the recipe and that the URL is for this page. I chose to capture the css selector from this version of allrecipes.com because the print layout is minimal with less irrelevant information.&lt;/p&gt;
+&lt;p&gt;To scrape the data we will start with 2 functions&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;read_html() to prepare the html for data extraction&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;html_nodes() to extract data that matches the named css selector&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ingredients &amp;lt;- read_html(web_address) %&amp;gt;% 
+html_nodes(&amp;quot;.recipe-print__container2 ul li&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This output is a bit messy because it contains some of the HTML, so one more function is needed to simplify the output&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;html_text() reduces output to only show content&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_html(web_address) %&amp;gt;% 
+html_nodes(&amp;quot;.recipe-print__container2 ul li&amp;quot;) %&amp;gt;% 
+html_text(trim = T) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;1 pound sweet Italian sausage&amp;quot;         
+##  [2] &amp;quot;3/4 pound lean ground beef&amp;quot;            
+##  [3] &amp;quot;1/2 cup minced onion&amp;quot;                  
+##  [4] &amp;quot;2 cloves garlic, crushed&amp;quot;              
+##  [5] &amp;quot;1 (28 ounce) can crushed tomatoes&amp;quot;     
+##  [6] &amp;quot;2 (6 ounce) cans tomato paste&amp;quot;         
+##  [7] &amp;quot;2 (6.5 ounce) cans canned tomato sauce&amp;quot;
+##  [8] &amp;quot;1/2 cup water&amp;quot;                         
+##  [9] &amp;quot;2 tablespoons white sugar&amp;quot;             
+## [10] &amp;quot;1 1/2 teaspoons dried basil leaves&amp;quot;    
+## [11] &amp;quot;1/2 teaspoon fennel seeds&amp;quot;             
+## [12] &amp;quot;1 teaspoon Italian seasoning&amp;quot;          
+## [13] &amp;quot;1 tablespoon salt&amp;quot;                     
+## [14] &amp;quot;1/4 teaspoon ground black pepper&amp;quot;      
+## [15] &amp;quot;4 tablespoons chopped fresh parsley&amp;quot;   
+## [16] &amp;quot;12 lasagna noodles&amp;quot;                    
+## [17] &amp;quot;16 ounces ricotta cheese&amp;quot;              
+## [18] &amp;quot;1 egg&amp;quot;                                 
+## [19] &amp;quot;1/2 teaspoon salt&amp;quot;                     
+## [20] &amp;quot;3/4 pound mozzarella cheese, sliced&amp;quot;   
+## [21] &amp;quot;3/4 cup grated Parmesan cheese&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Try changing the URL assigned to the web_address variable to see that this css selector can be used to extract ingredient information from any recipe page that is formatted for printing.&lt;/p&gt;
+&lt;p&gt;Here are a few for you to get started with &lt;a href=&#34;https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/print/?recipeType=Recipe&amp;amp;servings=24&amp;amp;isMetric=false&#34; class=&#34;uri&#34;&gt;https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/print/?recipeType=Recipe&amp;amp;servings=24&amp;amp;isMetric=false&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.allrecipes.com/recipe/15925/creamy-au-gratin-potatoes/print/?recipeType=Recipe&amp;amp;servings=4&amp;amp;isMetric=false&#34; class=&#34;uri&#34;&gt;https://www.allrecipes.com/recipe/15925/creamy-au-gratin-potatoes/print/?recipeType=Recipe&amp;amp;servings=4&amp;amp;isMetric=false&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Bon Appetit!&lt;/p&gt;
+&lt;div id=&#34;resources&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Resources&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Web Browsers
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm&#34; class=&#34;uri&#34;&gt;https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.explainthatstuff.com/howthewebworks.html&#34; class=&#34;uri&#34;&gt;https://www.explainthatstuff.com/howthewebworks.html&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.w3.org/TR/html401/intro/intro.html&#34; class=&#34;uri&#34;&gt;https://www.w3.org/TR/html401/intro/intro.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;HTML
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.quora.com/What-are-the-differences-between-HTML-XML-PHP-CSS-and-JavaScript-in-layman%E2%80%99s-terms-Is-it-possible-to-write-a-complex-website-code-successfully-by-using-just-1-of-those-languages&#34;&gt;https://www.quora.com/What-are-the-differences-between-HTML-XML-PHP-CSS-and-JavaScript-in-layman%E2%80%99s-terms-Is-it-possible-to-write-a-complex-website-code-successfully-by-using-just-1-of-those-languages&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.johnhaydon.com/whats-difference-between-css-html-php/&#34; class=&#34;uri&#34;&gt;https://www.johnhaydon.com/whats-difference-between-css-html-php/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Selector Gadge + Rvest
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.rstudio.com/resources/webinars/extracting-data-from-the-web-part-2/&#34; class=&#34;uri&#34;&gt;https://www.rstudio.com/resources/webinars/extracting-data-from-the-web-part-2/&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.rstudio.com/2014/11/24/rvest-easy-web-scraping-with-r/&#34; class=&#34;uri&#34;&gt;https://blog.rstudio.com/2014/11/24/rvest-easy-web-scraping-with-r/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html&#34; class=&#34;uri&#34;&gt;https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Scraping the Web without Learning HTML</title>
+      <link>/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/</guid>
+      <description>
+
+
+&lt;p&gt;Last year was a whirlwind full of exciting opportunities to travel and share my dual passions of food and statistics. When I resolved to eat healthier, my inner quant couldn’t resist the opportunity of using data to better achieve this goal. Therefore, I applied unsupervised machine learning to ease meal prep by grouping together recipes that shared similar ingredients. My data came from ingredients used in dishes uploaded to allrecipes.com, which as of May 2018 contained over 14,000 main meal dishes.&lt;/p&gt;
+&lt;p&gt;So, there was a lot of interest in how I collected this data–like the following text message:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/01-text.png&#34; style=&#34;width:50.0%&#34; style=&#34;height:50.0%&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;This article is me keeping true to my word, though I am actually dividing the topic into more than one post. Here will cover web scraping essentials with the rvest package in R, then I will follow-up with a post on using functional programming to scrape multiple pages.&lt;/p&gt;
+&lt;div id=&#34;what-is-web-scraping&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;What is web scraping&lt;/h3&gt;
+&lt;p&gt;A website is essentially a collection of archived information–which incidentally makes it a rich data source. Headlines, comments, and metrics, like the weather, are stored on a site and can be gathered to respectively get a sense of newsworthy topics, opinions, and trends over time.&lt;/p&gt;
+&lt;p&gt;This data must be extracted from the site into an analyzable format. Rather than copy and paste information, web scraping can be used to directly accumulate content from a website.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;how-does-web-scraping-work&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;How does web scraping work&lt;/h3&gt;
+&lt;p&gt;A webpage can be uniquely identified by its URL (Uniform Resource Locator) , which is also associated with an HTML (Hypertext Markup Language) file. HTML files provide guidelines for producing content on a webpage, and you can always view the HTML document used to generate a webpage by right-clicking and selecting &lt;code&gt;View Page Source&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/02-main_dish.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/03-view_source.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;If you are using a Google Chrome web browser, then a right-click and selection of &lt;code&gt;Inspect&lt;/code&gt; opens the HTML document in the same window as the webpage. Hovering over the HTML will highlight corresponding portions on the page. If you desire to highlight a more granular piece of information on the web page, you can attempt to accomplish this by hovering over a line of HTML and clicking on the left triangular icon to drill down into the text.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/04-inspect.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;You don’t need to be fluent in HTML in order to webscrape. Just know that the information you want to analyze on a site is stored in an html file, and web scraping can be used to collect this information.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-patterns-to-extract-information&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Using patterns to extract information&lt;/h3&gt;
+&lt;p&gt;HTML helps to organize a page by indicating how text should be displayed–for instance in a header, list, or certain division of the page. Categorically similar information tends to be visually alike, making a website easier to navigate. For example, recipe ingredients may be presented as a list and stylized with a font or color to be distinguished from recipe instructions. Stylistic patterns designed to ease user experience can be exploited to easily detect and collect information of interest from a website.&lt;/p&gt;
+&lt;p&gt;While HTML is responsible for structuring content on a webpage, CSS (Cascading Style Sheets) controls site aesthetics, like color scheme and fonts. Therefore, extracting categorically similar information from a site is easier if you know the HTML and CSS used to format the content.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;While HTML is responsible for structuring content on a webpage, CSS (Cascading Style Sheets) controls site aesthetics, like color scheme and fonts. Therefore, extracting categorically similar information from a site is &lt;strong&gt;&lt;em&gt;easier&lt;/em&gt;&lt;/strong&gt; if you know the HTML and CSS used to format the content.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can figure out the HTML and CSS specifications for displaying content with the &lt;a href=&#34;https://www.google.com/chrome/&#34;&gt;Google Chrome&lt;/a&gt; plugin Selector Gadget. Download Google Chrome if you haven’t already, and install the &lt;a href=&#34;https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb&#34;&gt;Selector Gadget Extension&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Here is Selector Gadget’s description of itself:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Selector Gadget is an open source Chrome Extension that makes CSS selector generation and discovery on complicated sites a breeze.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;After installing the extension, go to any page and launch it. A box will open in the bottom right of the website. Click on a page element that you would like your selector to match (it will turn green). SelectorGadget will then generate a minimal CSS selector for that element, and will highlight (yellow) everything that is matched by the selector. Now click on a highlighted element to remove it from the selector (red), or click on an unhighlighted element to add it to the selector. Through this process of selection and rejection, SelectorGadget helps you come up with the perfect CSS selector for your needs.&lt;/p&gt;
+&lt;p&gt;After Selector Gadget has been downloaded, click on the Selector Gadget icon in the toolbar to enable it.&lt;/p&gt;
+&lt;p&gt;If I wanted to know the HTML/CSS associated with recipe ingredients on allrecipes.com, then clicking on one ingredient highlights it in green and other text with identical HTML/CSS in yellow.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/05-selectora.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;If the yellow encompasses information that is categorically dissimilar from what you want, then click on the extraneous region and the yellow will turn red. Repeatedly deselect areas until the only information that you want is highlighted in yellow.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/post/2018-12-24-scraping-the-web-without-learning-html_files/06-selectorb.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;The css selector refers to HTML/CSS pattern used to format the text, and it can be found in the bottom right corner of the web browser. The css selector for ingredients is &lt;code&gt;.recipe-print__container2 ul li&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;but-what-does-this-have-to-do-with-r&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;But what does this have to do with R?&lt;/h3&gt;
+&lt;p&gt;R has a package called rvest that is able to scrape data from a webpage if you provide it with the page’s URL and the relevant css selector.&lt;/p&gt;
+&lt;p&gt;Download R and preferably the RStudio IDE–if you haven’t already.&lt;/p&gt;
+&lt;p&gt;Then, install Rvest&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;rvest&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load package
+library(rvest)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Loading required package: xml2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# load tidyvers to gain access to the pipe %&amp;gt;% function
+library(tidyverse)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ── Attaching packages ──────────────────── tidyverse 1.2.1 ──&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ✔ ggplot2 3.0.0     ✔ purrr   0.2.4
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.5
+## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+## ✔ readr   1.1.1     ✔ forcats 0.3.0&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## ── Conflicts ─────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter()         masks stats::filter()
+## ✖ readr::guess_encoding() masks rvest::guess_encoding()
+## ✖ dplyr::lag()            masks stats::lag()
+## ✖ purrr::pluck()          masks rvest::pluck()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;First, store the url to a variable&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;web_address &amp;lt;- &amp;quot;https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/print/?recipeType=Recipe&amp;amp;servings=12&amp;amp;isMetric=false&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Please note, that I chose to scrape ingredients from a print view of the recipe and that the URL is for this page. I chose to capture the css selector from this version of allrecipes.com because the print layout is minimal with less irrelevant information.&lt;/p&gt;
+&lt;p&gt;To scrape the data we will start with 2 functions&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;read_html() to prepare the html for data extraction&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;html_nodes() to extract data that matches the named css selector&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ingredients &amp;lt;- read_html(web_address) %&amp;gt;% 
+html_nodes(&amp;quot;.recipe-print__container2 ul li&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This output is a bit messy because it contains some of the HTML, so one more function is needed to simplify the output&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;html_text() reduces output to only show content&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;read_html(web_address) %&amp;gt;% 
+html_nodes(&amp;quot;.recipe-print__container2 ul li&amp;quot;) %&amp;gt;% 
+html_text(trim = T) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;1 pound sweet Italian sausage&amp;quot;         
+##  [2] &amp;quot;3/4 pound lean ground beef&amp;quot;            
+##  [3] &amp;quot;1/2 cup minced onion&amp;quot;                  
+##  [4] &amp;quot;2 cloves garlic, crushed&amp;quot;              
+##  [5] &amp;quot;1 (28 ounce) can crushed tomatoes&amp;quot;     
+##  [6] &amp;quot;2 (6 ounce) cans tomato paste&amp;quot;         
+##  [7] &amp;quot;2 (6.5 ounce) cans canned tomato sauce&amp;quot;
+##  [8] &amp;quot;1/2 cup water&amp;quot;                         
+##  [9] &amp;quot;2 tablespoons white sugar&amp;quot;             
+## [10] &amp;quot;1 1/2 teaspoons dried basil leaves&amp;quot;    
+## [11] &amp;quot;1/2 teaspoon fennel seeds&amp;quot;             
+## [12] &amp;quot;1 teaspoon Italian seasoning&amp;quot;          
+## [13] &amp;quot;1 tablespoon salt&amp;quot;                     
+## [14] &amp;quot;1/4 teaspoon ground black pepper&amp;quot;      
+## [15] &amp;quot;4 tablespoons chopped fresh parsley&amp;quot;   
+## [16] &amp;quot;12 lasagna noodles&amp;quot;                    
+## [17] &amp;quot;16 ounces ricotta cheese&amp;quot;              
+## [18] &amp;quot;1 egg&amp;quot;                                 
+## [19] &amp;quot;1/2 teaspoon salt&amp;quot;                     
+## [20] &amp;quot;3/4 pound mozzarella cheese, sliced&amp;quot;   
+## [21] &amp;quot;3/4 cup grated Parmesan cheese&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Try changing the URL assigned to the web_address variable to see that this css selector can be used to extract ingredient information from any recipe page that is formatted for printing.&lt;/p&gt;
+&lt;p&gt;Here are a few for you to get started with &lt;a href=&#34;https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/print/?recipeType=Recipe&amp;amp;servings=24&amp;amp;isMetric=false&#34; class=&#34;uri&#34;&gt;https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/print/?recipeType=Recipe&amp;amp;servings=24&amp;amp;isMetric=false&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.allrecipes.com/recipe/15925/creamy-au-gratin-potatoes/print/?recipeType=Recipe&amp;amp;servings=4&amp;amp;isMetric=false&#34; class=&#34;uri&#34;&gt;https://www.allrecipes.com/recipe/15925/creamy-au-gratin-potatoes/print/?recipeType=Recipe&amp;amp;servings=4&amp;amp;isMetric=false&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Bon Appetit!&lt;/p&gt;
+&lt;div id=&#34;resources&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Resources&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Web Browsers
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm&#34; class=&#34;uri&#34;&gt;https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.explainthatstuff.com/howthewebworks.html&#34; class=&#34;uri&#34;&gt;https://www.explainthatstuff.com/howthewebworks.html&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.w3.org/TR/html401/intro/intro.html&#34; class=&#34;uri&#34;&gt;https://www.w3.org/TR/html401/intro/intro.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;HTML
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.quora.com/What-are-the-differences-between-HTML-XML-PHP-CSS-and-JavaScript-in-layman%E2%80%99s-terms-Is-it-possible-to-write-a-complex-website-code-successfully-by-using-just-1-of-those-languages&#34;&gt;https://www.quora.com/What-are-the-differences-between-HTML-XML-PHP-CSS-and-JavaScript-in-layman%E2%80%99s-terms-Is-it-possible-to-write-a-complex-website-code-successfully-by-using-just-1-of-those-languages&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.johnhaydon.com/whats-difference-between-css-html-php/&#34; class=&#34;uri&#34;&gt;https://www.johnhaydon.com/whats-difference-between-css-html-php/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Selector Gadge + Rvest
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.rstudio.com/resources/webinars/extracting-data-from-the-web-part-2/&#34; class=&#34;uri&#34;&gt;https://www.rstudio.com/resources/webinars/extracting-data-from-the-web-part-2/&lt;/a&gt;&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.rstudio.com/2014/11/24/rvest-easy-web-scraping-with-r/&#34; class=&#34;uri&#34;&gt;https://blog.rstudio.com/2014/11/24/rvest-easy-web-scraping-with-r/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html&#34; class=&#34;uri&#34;&gt;https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Example Page</title>
+      <link>/tutorial/example/</link>
+      <pubDate>Sun, 09 Sep 2018 00:00:00 -0400</pubDate>
+      
+      <guid>/tutorial/example/</guid>
+      <description>
+
+&lt;p&gt;In this tutorial, I&amp;rsquo;ll share my top 10 tips for getting started with Academic:&lt;/p&gt;
+
+&lt;h2 id=&#34;tip-1&#34;&gt;Tip 1&lt;/h2&gt;
+
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+
+&lt;h2 id=&#34;tip-2&#34;&gt;Tip 2&lt;/h2&gt;
+
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Privacy Policy</title>
+      <link>/privacy/</link>
+      <pubDate>Thu, 28 Jun 2018 00:00:00 -0400</pubDate>
+      
+      <guid>/privacy/</guid>
+      <description>&lt;p&gt;&amp;hellip;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Example Talk</title>
+      <link>/talk/example/</link>
+      <pubDate>Sun, 01 Jan 2017 00:00:00 -0500</pubDate>
+      
+      <guid>/talk/example/</guid>
+      <description>&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;Click on the &lt;strong&gt;Slides&lt;/strong&gt; button above to view the built-in slides feature.&lt;/p&gt;
+
+&lt;/div&gt;
+
+
+&lt;p&gt;Slides can be added in a few ways:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Create&lt;/strong&gt; slides using Academic&amp;rsquo;s &lt;em&gt;Slides&lt;/em&gt; feature and link using &lt;code&gt;url_slides&lt;/code&gt; parameter in the front matter of the talk file&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Upload&lt;/strong&gt; an existing slide deck to &lt;code&gt;static/&lt;/code&gt; and link using &lt;code&gt;url_slides&lt;/code&gt; parameter in the front matter of the talk file&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Embed&lt;/strong&gt; your slides (e.g. Google Slides) or presentation video on this page using &lt;a href=&#34;https://sourcethemes.com/academic/docs/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Further talk details can easily be added to this page using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>External Project</title>
+      <link>/project/external-project/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 -0400</pubDate>
+      
+      <guid>/project/external-project/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Internal Project</title>
+      <link>/project/internal-project/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 -0400</pubDate>
+      
+      <guid>/project/internal-project/</guid>
+      <description>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p&gt;
+
+&lt;p&gt;Nullam vel molestie justo. Curabitur vitae efficitur leo. In hac habitasse platea dictumst. Sed pulvinar mauris dui, eget varius purus congue ac. Nulla euismod, lorem vel elementum dapibus, nunc justo porta mi, sed tempus est est vel tellus. Nam et enim eleifend, laoreet sem sit amet, elementum sem. Morbi ut leo congue, maximus velit ut, finibus arcu. In et libero cursus, rutrum risus non, molestie leo. Nullam congue quam et volutpat malesuada. Sed risus tortor, pulvinar et dictum nec, sodales non mi. Phasellus lacinia commodo laoreet. Nam mollis, erat in feugiat consectetur, purus eros egestas tellus, in auctor urna odio at nibh. Mauris imperdiet nisi ac magna convallis, at rhoncus ligula cursus.&lt;/p&gt;
+
+&lt;p&gt;Cras aliquam rhoncus ipsum, in hendrerit nunc mattis vitae. Duis vitae efficitur metus, ac tempus leo. Cras nec fringilla lacus. Quisque sit amet risus at ipsum pharetra commodo. Sed aliquam mauris at consequat eleifend. Praesent porta, augue sed viverra bibendum, neque ante euismod ante, in vehicula justo lorem ac eros. Suspendisse augue libero, venenatis eget tincidunt ut, malesuada at lorem. Donec vitae bibendum arcu. Aenean maximus nulla non pretium iaculis. Quisque imperdiet, nulla in pulvinar aliquet, velit quam ultrices quam, sit amet fringilla leo sem vel nunc. Mauris in lacinia lacus.&lt;/p&gt;
+
+&lt;p&gt;Suspendisse a tincidunt lacus. Curabitur at urna sagittis, dictum ante sit amet, euismod magna. Sed rutrum massa id tortor commodo, vitae elementum turpis tempus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean purus turpis, venenatis a ullamcorper nec, tincidunt et massa. Integer posuere quam rutrum arcu vehicula imperdiet. Mauris ullamcorper quam vitae purus congue, quis euismod magna eleifend. Vestibulum semper vel augue eget tincidunt. Fusce eget justo sodales, dapibus odio eu, ultrices lorem. Duis condimentum lorem id eros commodo, in facilisis mauris scelerisque. Morbi sed auctor leo. Nullam volutpat a lacus quis pharetra. Nulla congue rutrum magna a ornare.&lt;/p&gt;
+
+&lt;p&gt;Aliquam in turpis accumsan, malesuada nibh ut, hendrerit justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque sed erat nec justo posuere suscipit. Donec ut efficitur arcu, in malesuada neque. Nunc dignissim nisl massa, id vulputate nunc pretium nec. Quisque eget urna in risus suscipit ultricies. Pellentesque odio odio, tincidunt in eleifend sed, posuere a diam. Nam gravida nisl convallis semper elementum. Morbi vitae felis faucibus, vulputate orci placerat, aliquet nisi. Aliquam erat volutpat. Maecenas sagittis pulvinar purus, sed porta quam laoreet at.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>A Person Re-Identification System For Mobile Devices</title>
+      <link>/publication/person-re-id/</link>
+      <pubDate>Tue, 01 Sep 2015 00:00:00 -0400</pubDate>
+      
+      <guid>/publication/person-re-id/</guid>
+      <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Mobile visual clothing search</title>
+      <link>/publication/clothing-search/</link>
+      <pubDate>Mon, 01 Jul 2013 00:00:00 -0400</pubDate>
+      
+      <guid>/publication/clothing-search/</guid>
+      <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Slides</title>
+      <link>/slides/example-slides/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/slides/example-slides/</guid>
+      <description>
+
+&lt;h1 id=&#34;welcome-to-slides&#34;&gt;Welcome to Slides&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/&#34; target=&#34;_blank&#34;&gt;Academic&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;features&#34;&gt;Features&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Efficiently write slides in Markdown&lt;/li&gt;
+&lt;li&gt;3-in-1: Create, Present, and Publish your slides&lt;/li&gt;
+&lt;li&gt;Supports speaker notes&lt;/li&gt;
+&lt;li&gt;Mobile friendly slides&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;controls&#34;&gt;Controls&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Next: &lt;code&gt;Right Arrow&lt;/code&gt; or &lt;code&gt;Space&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Previous: &lt;code&gt;Left Arrow&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Start: &lt;code&gt;Home&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Finish: &lt;code&gt;End&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Overview: &lt;code&gt;Esc&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Speaker notes: &lt;code&gt;S&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Fullscreen: &lt;code&gt;F&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Zoom: &lt;code&gt;Alt + Click&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/hakimel/reveal.js#pdf-export&#34; target=&#34;_blank&#34;&gt;PDF Export&lt;/a&gt;: &lt;code&gt;E&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;code-highlighting&#34;&gt;Code Highlighting&lt;/h2&gt;
+
+&lt;p&gt;Inline code: &lt;code&gt;variable&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Code block:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;porridge = &amp;quot;blueberry&amp;quot;
+if porridge == &amp;quot;blueberry&amp;quot;:
+    print(&amp;quot;Eating...&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;math&#34;&gt;Math&lt;/h2&gt;
+
+&lt;p&gt;In-line math: $x + y = z$&lt;/p&gt;
+
+&lt;p&gt;Block math:&lt;/p&gt;
+
+&lt;p&gt;$$
+f\left( x \right) = \;\frac{{2\left( {x + 4} \right)\left( {x - 4} \right)}}{{\left( {x + 4} \right)\left( {x + 1} \right)}}
+$$&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;fragments&#34;&gt;Fragments&lt;/h2&gt;
+
+&lt;p&gt;Make content appear incrementally&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{{% fragment %}} One {{% /fragment %}}
+{{% fragment %}} **Two** {{% /fragment %}}
+{{% fragment %}} Three {{% /fragment %}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Press &lt;code&gt;Space&lt;/code&gt; to play!&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&#34;fragment &#34; &gt;
+  One
+&lt;/span&gt;
+&lt;span class=&#34;fragment &#34; &gt;
+  &lt;strong&gt;Two&lt;/strong&gt;
+&lt;/span&gt;
+&lt;span class=&#34;fragment &#34; &gt;
+  Three
+&lt;/span&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;A fragment can accept two optional parameters:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;class&lt;/code&gt;: use a custom style (requires definition in custom CSS)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;weight&lt;/code&gt;: sets the order in which a fragment appears&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;speaker-notes&#34;&gt;Speaker Notes&lt;/h2&gt;
+
+&lt;p&gt;Add speaker notes to your presentation&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;{{% speaker_note %}}
+- Only the speaker can read these notes
+- Press `S` key to view
+{{% /speaker_note %}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Press the &lt;code&gt;S&lt;/code&gt; key to view the speaker notes!&lt;/p&gt;
+
+&lt;aside class=&#34;notes&#34;&gt;
+  &lt;ul&gt;
+&lt;li&gt;Only the speaker can read these notes&lt;/li&gt;
+&lt;li&gt;Press &lt;code&gt;S&lt;/code&gt; key to view&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/aside&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;themes&#34;&gt;Themes&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;black: Black background, white text, blue links (default)&lt;/li&gt;
+&lt;li&gt;white: White background, black text, blue links&lt;/li&gt;
+&lt;li&gt;league: Gray background, white text, blue links&lt;/li&gt;
+&lt;li&gt;beige: Beige background, dark text, brown links&lt;/li&gt;
+&lt;li&gt;sky: Blue background, thin dark text, blue links&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;night: Black background, thick white text, orange links&lt;/li&gt;
+&lt;li&gt;serif: Cappuccino background, gray text, brown links&lt;/li&gt;
+&lt;li&gt;simple: White background, black text, blue links&lt;/li&gt;
+&lt;li&gt;solarized: Cream-colored background, dark green text, blue links&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+
+&lt;section data-noprocess data-shortcode-slide
+  
+      
+      data-background-image=&#34;/img/boards.jpg&#34;
+  &gt;
+
+
+&lt;h2 id=&#34;custom-slide&#34;&gt;Custom Slide&lt;/h2&gt;
+
+&lt;p&gt;Customize the slide style and background&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;{{&amp;lt; slide background-image=&amp;quot;/img/boards.jpg&amp;quot; &amp;gt;}}
+{{&amp;lt; slide background-color=&amp;quot;#0000FF&amp;quot; &amp;gt;}}
+{{&amp;lt; slide class=&amp;quot;my-style&amp;quot; &amp;gt;}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;custom-css-example&#34;&gt;Custom CSS Example&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s make headers navy colored.&lt;/p&gt;
+
+&lt;p&gt;Create &lt;code&gt;assets/css/reveal_custom.css&lt;/code&gt; with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;.reveal section h1,
+.reveal section h2,
+.reveal section h3 {
+  color: navy;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&#34;questions&#34;&gt;Questions?&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://discourse.gohugo.io&#34; target=&#34;_blank&#34;&gt;Ask&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34;&gt;Documentation&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

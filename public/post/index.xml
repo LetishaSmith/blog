@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Cooking Up Statistics</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on Cooking Up Statistics</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&amp;copy; 2018</copyright>
+    <lastBuildDate>Sun, 01 Jan 2017 00:00:00 -0500</lastBuildDate>
+    
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Scraping the Web without Learning HTML</title>
+      <link>/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/</guid>
+      <description>Last year was a whirlwind full of exciting opportunities to travel and share my dual passions of food and statistics. When I resolved to eat healthier, my inner quant couldn’t resist the opportunity of using data to better achieve this goal. Therefore, I applied unsupervised machine learning to ease meal prep by grouping together recipes that shared similar ingredients. My data came from ingredients used in dishes uploaded to allrecipes.</description>
+    </item>
+    
+    <item>
+      <title>Scraping the Web without Learning HTML</title>
+      <link>/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/</guid>
+      <description>Last year was a whirlwind full of exciting opportunities to travel and share my dual passions of food and statistics. When I resolved to eat healthier, my inner quant couldn’t resist the opportunity of using data to better achieve this goal. Therefore, I applied unsupervised machine learning to ease meal prep by grouping together recipes that shared similar ingredients. My data came from ingredients used in dishes uploaded to allrecipes.</description>
+    </item>
+    
+  </channel>
+</rss>

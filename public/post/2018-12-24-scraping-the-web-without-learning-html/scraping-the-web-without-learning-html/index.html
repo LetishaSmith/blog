@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 3.2.0">
+  <meta name="generator" content="Hugo 0.52" />
+  <meta name="author" content="Letisha Smith">
+
+  
+  
+  
+  
+    
+  
+  <meta name="description" content="Last year was a whirlwind full of exciting opportunities to travel and share my dual passions of food and statistics. When I resolved to eat healthier, my inner quant couldn’t resist the opportunity of using data to better achieve this goal. Therefore, I applied unsupervised machine learning to ease meal prep by grouping together recipes that shared similar ingredients. My data came from ingredients used in dishes uploaded to allrecipes.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/">
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" crossorigin="anonymous">
+        
+      
+    
+
+    
+
+    
+
+  
+
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:400,400italic,700|Roboto+Mono">
+  
+
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+  
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Cooking Up Statistics">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Cooking Up Statistics">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/">
+
+  
+  
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="twitter:site" content="@letishaudrey">
+  <meta property="twitter:creator" content="@letishaudrey">
+  
+  <meta property="og:site_name" content="Cooking Up Statistics">
+  <meta property="og:url" content="/post/2018-12-24-scraping-the-web-without-learning-html/scraping-the-web-without-learning-html/">
+  <meta property="og:title" content="Scraping the Web without Learning HTML | Cooking Up Statistics">
+  <meta property="og:description" content="Last year was a whirlwind full of exciting opportunities to travel and share my dual passions of food and statistics. When I resolved to eat healthier, my inner quant couldn’t resist the opportunity of using data to better achieve this goal. Therefore, I applied unsupervised machine learning to ease meal prep by grouping together recipes that shared similar ingredients. My data came from ingredients used in dishes uploaded to allrecipes."><meta property="og:image" content="/img/portrait.jpg">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2019-01-05T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2019-01-05T00:00:00&#43;00:00">
+  
+
+  
+
+  
+
+  <title>Scraping the Web without Learning HTML | Cooking Up Statistics</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#TableOfContents" data-offset="71" >
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" role="textbox" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="/"><img src="/img/monogram.png" alt="Cooking Up Statistics"></a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav ml-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#hero">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#about">
+            
+            <span>Bio</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+      
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+        </li>
+        
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1 itemprop="name">Scraping the Web without Learning HTML</h1>
+
+  
+
+  
+    
+
+<div class="article-metadata">
+
+  
+  
+  <span itemscope itemprop="author" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Letisha Smith">
+  </span>
+  
+
+  <span class="article-date">
+    
+    <meta content="2019-01-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">
+    <time datetime="2019-01-05 00:00:00 &#43;0000 UTC" itemprop="dateModified">
+      Jan 5, 2019
+    </time>
+  </span>
+  <span itemscope itemprop="publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Letisha Smith">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    7 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder"></i>
+    
+    <a href="/categories/tutorial/">Tutorial</a>
+    
+  </span>
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Scraping%20the%20Web%20without%20Learning%20HTML&amp;url=%2fpost%2f2018-12-24-scraping-the-web-without-learning-html%2fscraping-the-web-without-learning-html%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fpost%2f2018-12-24-scraping-the-web-without-learning-html%2fscraping-the-web-without-learning-html%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fpost%2f2018-12-24-scraping-the-web-without-learning-html%2fscraping-the-web-without-learning-html%2f&amp;title=Scraping%20the%20Web%20without%20Learning%20HTML"
+         target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fpost%2f2018-12-24-scraping-the-web-without-learning-html%2fscraping-the-web-without-learning-html%2f&amp;title=Scraping%20the%20Web%20without%20Learning%20HTML"
+         target="_blank" rel="noopener">
+        <i class="fab fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Scraping%20the%20Web%20without%20Learning%20HTML&amp;body=%2fpost%2f2018-12-24-scraping-the-web-without-learning-html%2fscraping-the-web-without-learning-html%2f">
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style" itemprop="articleBody">
+      
+
+
+<p>Last year was a whirlwind full of exciting opportunities to travel and share my dual passions of food and statistics. When I resolved to eat healthier, my inner quant couldn’t resist the opportunity of using data to better achieve this goal. Therefore, I applied unsupervised machine learning to ease meal prep by grouping together recipes that shared similar ingredients. My data came from ingredients used in dishes uploaded to allrecipes.com, which as of May 2018 contained over 14,000 main meal dishes.</p>
+<p>So, there was a lot of interest in how I collected this data–like the following text message:</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/01-text.png" style="width:50.0%" style="height:50.0%" />
+
+</div>
+<p>This article is me keeping true to my word, though I am actually dividing the topic into more than one post. Here will cover web scraping essentials with the rvest package in R, then I will follow-up with a post on using functional programming to scrape multiple pages.</p>
+<div id="what-is-web-scraping" class="section level3">
+<h3>What is web scraping</h3>
+<p>A website is essentially a collection of archived information–which incidentally makes it a rich data source. Headlines, comments, and metrics, like the weather, are stored on a site and can be gathered to respectively get a sense of newsworthy topics, opinions, and trends over time.</p>
+<p>This data must be extracted from the site into an analyzable format. Rather than copy and paste information, web scraping can be used to directly accumulate content from a website.</p>
+</div>
+<div id="how-does-web-scraping-work" class="section level3">
+<h3>How does web scraping work</h3>
+<p>A webpage can be uniquely identified by its URL (Uniform Resource Locator) , which is also associated with an HTML (Hypertext Markup Language) file. HTML files provide guidelines for producing content on a webpage, and you can always view the HTML document used to generate a webpage by right-clicking and selecting <code>View Page Source</code>.</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/02-main_dish.png" />
+
+</div>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/03-view_source.png" />
+
+</div>
+<p>If you are using a Google Chrome web browser, then a right-click and selection of <code>Inspect</code> opens the HTML document in the same window as the webpage. Hovering over the HTML will highlight corresponding portions on the page. If you desire to highlight a more granular piece of information on the web page, you can attempt to accomplish this by hovering over a line of HTML and clicking on the left triangular icon to drill down into the text.</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/04-inspect.png" />
+
+</div>
+<p>You don’t need to be fluent in HTML in order to webscrape. Just know that the information you want to analyze on a site is stored in an html file, and web scraping can be used to collect this information.</p>
+</div>
+<div id="using-patterns-to-extract-information" class="section level3">
+<h3>Using patterns to extract information</h3>
+<p>HTML helps to organize a page by indicating how text should be displayed–for instance in a header, list, or certain division of the page. Categorically similar information tends to be visually alike, making a website easier to navigate. For example, recipe ingredients may be presented as a list and stylized with a font or color to be distinguished from recipe instructions. Stylistic patterns designed to ease user experience can be exploited to easily detect and collect information of interest from a website.</p>
+<p>While HTML is responsible for structuring content on a webpage, CSS (Cascading Style Sheets) controls site aesthetics, like color scheme and fonts. Therefore, extracting categorically similar information from a site is easier if you know the HTML and CSS used to format the content.</p>
+<ul>
+<li>While HTML is responsible for structuring content on a webpage, CSS (Cascading Style Sheets) controls site aesthetics, like color scheme and fonts. Therefore, extracting categorically similar information from a site is <strong><em>easier</em></strong> if you know the HTML and CSS used to format the content.</li>
+</ul>
+<p>You can figure out the HTML and CSS specifications for displaying content with the <a href="https://www.google.com/chrome/">Google Chrome</a> plugin Selector Gadget. Download Google Chrome if you haven’t already, and install the <a href="https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb">Selector Gadget Extension</a>.</p>
+<p>Here is Selector Gadget’s description of itself:</p>
+<blockquote>
+<p>Selector Gadget is an open source Chrome Extension that makes CSS selector generation and discovery on complicated sites a breeze.</p>
+</blockquote>
+<p>After installing the extension, go to any page and launch it. A box will open in the bottom right of the website. Click on a page element that you would like your selector to match (it will turn green). SelectorGadget will then generate a minimal CSS selector for that element, and will highlight (yellow) everything that is matched by the selector. Now click on a highlighted element to remove it from the selector (red), or click on an unhighlighted element to add it to the selector. Through this process of selection and rejection, SelectorGadget helps you come up with the perfect CSS selector for your needs.</p>
+<p>After Selector Gadget has been downloaded, click on the Selector Gadget icon in the toolbar to enable it.</p>
+<p>If I wanted to know the HTML/CSS associated with recipe ingredients on allrecipes.com, then clicking on one ingredient highlights it in green and other text with identical HTML/CSS in yellow.</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/05-selectora.png" />
+
+</div>
+<p>If the yellow encompasses information that is categorically dissimilar from what you want, then click on the extraneous region and the yellow will turn red. Repeatedly deselect areas until the only information that you want is highlighted in yellow.</p>
+<div class="figure">
+<img src="/post/2018-12-24-scraping-the-web-without-learning-html_files/06-selectorb.png" />
+
+</div>
+<p>The css selector refers to HTML/CSS pattern used to format the text, and it can be found in the bottom right corner of the web browser. The css selector for ingredients is <code>.recipe-print__container2 ul li</code>.</p>
+</div>
+<div id="but-what-does-this-have-to-do-with-r" class="section level3">
+<h3>But what does this have to do with R?</h3>
+<p>R has a package called rvest that is able to scrape data from a webpage if you provide it with the page’s URL and the relevant css selector.</p>
+<p>Download R and preferably the RStudio IDE–if you haven’t already.</p>
+<p>Then, install Rvest</p>
+<pre class="r"><code>install.packages(&quot;rvest&quot;)</code></pre>
+<pre class="r"><code># load package
+library(rvest)</code></pre>
+<pre><code>## Loading required package: xml2</code></pre>
+<pre class="r"><code># load tidyvers to gain access to the pipe %&gt;% function
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ──────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.0.0     ✔ purrr   0.2.4
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.5
+## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
+<pre><code>## ── Conflicts ─────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter()         masks stats::filter()
+## ✖ readr::guess_encoding() masks rvest::guess_encoding()
+## ✖ dplyr::lag()            masks stats::lag()
+## ✖ purrr::pluck()          masks rvest::pluck()</code></pre>
+<p>First, store the url to a variable</p>
+<pre class="r"><code>web_address &lt;- &quot;https://www.allrecipes.com/recipe/23600/worlds-best-lasagna/print/?recipeType=Recipe&amp;servings=12&amp;isMetric=false&quot;</code></pre>
+<p>Please note, that I chose to scrape ingredients from a print view of the recipe and that the URL is for this page. I chose to capture the css selector from this version of allrecipes.com because the print layout is minimal with less irrelevant information.</p>
+<p>To scrape the data we will start with 2 functions</p>
+<ul>
+<li><p>read_html() to prepare the html for data extraction</p></li>
+<li><p>html_nodes() to extract data that matches the named css selector</p></li>
+</ul>
+<pre class="r"><code>ingredients &lt;- read_html(web_address) %&gt;% 
+html_nodes(&quot;.recipe-print__container2 ul li&quot;)</code></pre>
+<p>This output is a bit messy because it contains some of the HTML, so one more function is needed to simplify the output</p>
+<ul>
+<li>html_text() reduces output to only show content</li>
+</ul>
+<pre class="r"><code>read_html(web_address) %&gt;% 
+html_nodes(&quot;.recipe-print__container2 ul li&quot;) %&gt;% 
+html_text(trim = T) </code></pre>
+<pre><code>##  [1] &quot;1 pound sweet Italian sausage&quot;         
+##  [2] &quot;3/4 pound lean ground beef&quot;            
+##  [3] &quot;1/2 cup minced onion&quot;                  
+##  [4] &quot;2 cloves garlic, crushed&quot;              
+##  [5] &quot;1 (28 ounce) can crushed tomatoes&quot;     
+##  [6] &quot;2 (6 ounce) cans tomato paste&quot;         
+##  [7] &quot;2 (6.5 ounce) cans canned tomato sauce&quot;
+##  [8] &quot;1/2 cup water&quot;                         
+##  [9] &quot;2 tablespoons white sugar&quot;             
+## [10] &quot;1 1/2 teaspoons dried basil leaves&quot;    
+## [11] &quot;1/2 teaspoon fennel seeds&quot;             
+## [12] &quot;1 teaspoon Italian seasoning&quot;          
+## [13] &quot;1 tablespoon salt&quot;                     
+## [14] &quot;1/4 teaspoon ground black pepper&quot;      
+## [15] &quot;4 tablespoons chopped fresh parsley&quot;   
+## [16] &quot;12 lasagna noodles&quot;                    
+## [17] &quot;16 ounces ricotta cheese&quot;              
+## [18] &quot;1 egg&quot;                                 
+## [19] &quot;1/2 teaspoon salt&quot;                     
+## [20] &quot;3/4 pound mozzarella cheese, sliced&quot;   
+## [21] &quot;3/4 cup grated Parmesan cheese&quot;</code></pre>
+<p>Try changing the URL assigned to the web_address variable to see that this css selector can be used to extract ingredient information from any recipe page that is formatted for printing.</p>
+<p>Here are a few for you to get started with <a href="https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/print/?recipeType=Recipe&amp;servings=24&amp;isMetric=false" class="uri">https://www.allrecipes.com/recipe/10813/best-chocolate-chip-cookies/print/?recipeType=Recipe&amp;servings=24&amp;isMetric=false</a></p>
+<p><a href="https://www.allrecipes.com/recipe/15925/creamy-au-gratin-potatoes/print/?recipeType=Recipe&amp;servings=4&amp;isMetric=false" class="uri">https://www.allrecipes.com/recipe/15925/creamy-au-gratin-potatoes/print/?recipeType=Recipe&amp;servings=4&amp;isMetric=false</a></p>
+<p>Bon Appetit!</p>
+<div id="resources" class="section level4">
+<h4>Resources</h4>
+<ul>
+<li>Web Browsers
+<ul>
+<li><a href="https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm" class="uri">https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm</a><br />
+</li>
+<li><a href="https://www.explainthatstuff.com/howthewebworks.html" class="uri">https://www.explainthatstuff.com/howthewebworks.html</a><br />
+</li>
+<li><a href="https://www.w3.org/TR/html401/intro/intro.html" class="uri">https://www.w3.org/TR/html401/intro/intro.html</a></li>
+</ul></li>
+<li>HTML
+<ul>
+<li><a href="https://www.quora.com/What-are-the-differences-between-HTML-XML-PHP-CSS-and-JavaScript-in-layman%E2%80%99s-terms-Is-it-possible-to-write-a-complex-website-code-successfully-by-using-just-1-of-those-languages">https://www.quora.com/What-are-the-differences-between-HTML-XML-PHP-CSS-and-JavaScript-in-layman%E2%80%99s-terms-Is-it-possible-to-write-a-complex-website-code-successfully-by-using-just-1-of-those-languages</a><br />
+</li>
+<li><a href="https://www.johnhaydon.com/whats-difference-between-css-html-php/" class="uri">https://www.johnhaydon.com/whats-difference-between-css-html-php/</a></li>
+</ul></li>
+<li>Selector Gadge + Rvest
+<ul>
+<li><a href="https://www.rstudio.com/resources/webinars/extracting-data-from-the-web-part-2/" class="uri">https://www.rstudio.com/resources/webinars/extracting-data-from-the-web-part-2/</a><br />
+</li>
+<li><a href="https://blog.rstudio.com/2014/11/24/rvest-easy-web-scraping-with-r/" class="uri">https://blog.rstudio.com/2014/11/24/rvest-easy-web-scraping-with-r/</a></li>
+<li><a href="https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html" class="uri">https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+    </div>
+
+    
+
+    
+
+
+
+
+
+
+<div class="media author-card" itemscope itemtype="http://schema.org/Person">
+  
+  <img class="portrait mr-3" src="/img/portrait.jpg" itemprop="image" alt="Avatar">
+  
+  <div class="media-body">
+    <h5 class="card-title" itemprop="name"><a href="/">Letisha Smith</a></h5>
+    <h6 class="card-subtitle">MS Applied Statistics</h6>
+    
+    <ul class="network-icon" aria-hidden="true">
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="/#contact" >
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://twitter.com/letishaaudrey" target="_blank" rel="noopener">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://github.com/letishasmith" target="_blank" rel="noopener">
+          <i class="fab fa-github"></i>
+        </a>
+      </li>
+      
+      
+      
+      
+        
+      
+      
+      
+      
+      
+        
+      
+      <li>
+        <a itemprop="sameAs" href="https://github.com/letishas" target="_blank" rel="noopener">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+
+
+    
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<div class="container">
+  <footer class="site-footer">
+  
+  <p class="powered-by">
+    <a href="/privacy/">Privacy Policy</a>
+  </p>
+  
+
+  <p class="powered-by">
+    &copy; 2018 &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+</div>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+        
+      
+
+      
+      
+    
+
+    
+    
+
+    
+    
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script>
+      const search_index_filename = "/index.json";
+      const i18n = {
+        'placeholder': "Search...",
+        'results': "results found",
+        'no_results': "No results found"
+      };
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.d037ee5294b166a79dec317c58aea9cc.js"></script>
+
+    
+
+  </body>
+</html>
+
