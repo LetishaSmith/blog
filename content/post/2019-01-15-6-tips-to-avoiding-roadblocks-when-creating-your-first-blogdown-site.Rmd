@@ -88,7 +88,7 @@ I soon realized, that my first mistake was failing to list the `public/` directo
 .Ruserdata
 
 # ignore public directory
-public/
+public
 ```
 
 After hours of futile google searches on error messages, I realized that my second mistake was misspecifying my Hugo version. Discovering the `blogdown::hugo_version()`  command made me realize that my Hugo version was ``r blogdown::hugo_version()``, so I updated the Netlify `HUGO_VERSION` variable with the appropriate number.

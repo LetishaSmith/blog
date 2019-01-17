@@ -4,4 +4,6 @@
 .Ruserdata
 
 # ignore public directory
-public/
+public
+blogdown
+.DS_Store
