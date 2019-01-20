@@ -81,7 +81,7 @@ I was initially overwhelmed in thinking about where to start since the main bene
 
 However, I embraced this opportunity to learn, took a step back, and attempted to deploy the site by uploading the `public/` directory of the project to Netlify, which worked. 
 
-Then, I attempted to deploy the Demo version of the site, which also produced errors and made me feel like the issue wasn’t specific to how I personalized my site `r emo::ji("relieved")`
+Then, I attempted to deploy the [Demo version of the site](https://themes.gohugo.io/theme/academic/), which also produced errors and made me feel like the issue wasn’t specific to how I personalized my site `r emo::ji("relieved")`
 
 I soon realized, that my first mistake was failing to list the `public/` directory in the `.gitignore` file, so I changed it to look like this
 
@@ -102,7 +102,7 @@ After hours of futile google searches on error messages, I realized that my seco
 
 This final change resulted in deployment as expected, and I proceeded with selecting my domain name.
 
-**The internet wasn't built in a day and your blog probably won't be either, so embrace the opportunities to learn & grow along the way!**
+**The internet wasn't built in a day and your blog probably won't be either, so embrace opportunities to learn & grow along the way!**
 
 ![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/07-grow.png)
 
