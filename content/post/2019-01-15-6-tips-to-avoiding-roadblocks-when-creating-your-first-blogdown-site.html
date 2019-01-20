@@ -12,17 +12,21 @@ image:
 
 
 
-<p><a href="https://bookdown.org/yihui/blogdown/">Blogdown: Creating Websites with R Markdown</a> is an excellent manual on building websites with R. Therefore, this post won’t cover the technical aspects of creating a blog. Instead, I want to provide a few tips for actually following through on your goal to blog on a site created and maintained by yourself.</p>
+<p><a href="https://bookdown.org/yihui/blogdown/">Blogdown: Creating Websites with R Markdown</a> is an excellent manual on building websites with R. Therefore, this post won’t cover the technical aspects of creating a blog. Instead, I want to provide <strong>a few tips for actually following through on your goal to blog</strong> on a site created and maintained by yourself.</p>
 <div id="tip-1-draft-your-post" class="section level3">
 <h3>Tip 1: Draft Your Post</h3>
-<p>If you want to start a blog, then I’m guessing that you have thoughts to share. So get your thoughts onto paper–or into a word processor.</p>
-<p>Building a site and documenting ideas are independent processes. Blogging is merely a means of <strong>sharing</strong> ideas. When I first embarked upon this endeavor, I failed to register that creating a blog is meaningless if it doesn’t contain any content.</p>
+<p><img src="/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/apple-keyboard-cactus-candle-947845.png" /> If you want to start a blog, then I’m guessing that you have thoughts to share. So <strong>get your ideas onto paper–or into a word processor</strong>.</p>
+<p>Building a site and documenting ideas are independent processes. Blogging is merely a means of <em>sharing</em> ideas. When I first embarked upon this endeavor, I failed to register that creating a blog is meaningless if it doesn’t contain any content.</p>
 <p>Therefore, drafting your first post before making a site provides motivation for conquering the latter.</p>
 </div>
 <div id="tip-2-read-about-blogdown" class="section level3">
 <h3>Tip 2: Read about Blogdown</h3>
+<div class="figure">
+<img src="/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/blogdown_cover.png" />
+
+</div>
 <p>A good chef will tell you to read all steps before preparing a dish. Likewise, it is important to know the steps involved in creating a website before embarking upon the task.</p>
-<p>There is no need to read Blogdown from cover to cover. However, read the first few chapters to at least get a general sense of the process, which can be generally summarized as:</p>
+<p>There is no need to read Blogdown from cover to cover. However, <strong>read the first few chapters to at least get a general sense</strong> of the process, which can be generally summarized as:</p>
 <ol style="list-style-type: decimal">
 <li>Create a blogdown project<br />
 </li>
@@ -35,6 +39,10 @@ image:
 </div>
 <div id="tip-3-use-the-academic-theme" class="section level3">
 <h3>Tip 3: Use the Academic Theme</h3>
+<div class="figure">
+<img src="/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/academic_theme.png" />
+
+</div>
 <p>As a visual learner, I desired an aesthetically pleasing website, and hugo has plenty of <a href="https://themes.gohugo.io/">themes</a> that meet this criteria. Yet my lack of web design skills, limited to my selection to themes that have functioned properly on <a href="https://awesome-blogdown.com/">pre-existing sites built with blogdown</a>.</p>
 <p>The academic theme immediately stood out to me because of its diversity in appearance as evidenced by the following blogs:</p>
 <ul>
@@ -51,13 +59,17 @@ image:
 <div id="tip-4-determine-minimum-content-for-launch" class="section level3">
 <h3>Tip 4: Determine Minimum Content for Launch</h3>
 <p>For me this was publishing a blog post and completing my bio section. When I first started using the Academic theme, I wanted to explore all of the widgets that it had to offer and have everything precisely formatted to match my vision. However, focusing on minor issues like the placement of images and formatting turned into a suck of energy.</p>
-<p>Therefore, narrow in on the few areas that you deem necessary for a complete site and get this stuff done. Along the way, create a list of things you would like to learn that you can focus on after your site has been deployed.</p>
+<p>Therefore, <strong>narrow in on the few areas that you deem necessary for a complete site and get this stuff done first</strong>. Along the way, create a list of things you would like to learn that you can focus on after your site has been deployed.</p>
 </div>
 <div id="tip-5-gauge-your-comfortability-with-gitgithub" class="section level3">
 <h3>Tip 5: Gauge your Comfortability with Git/GitHub</h3>
+<div class="figure">
+<img src="/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/git.png" />
+
+</div>
 <p>Fortunately, the recommended workflow provided in the blogdown book has deployment instructions irregardless of your comfortability with Git/GitHub. Nevertheless, the book explicitly states that <em>It can be much easier to publish a website if you are familiar with Git and GitHub</em>, and this was the strategy that I desired for deployment.</p>
 <p>In spite of using Git/GitHub in the past, I felt as if I needed a quick refresher before following this approach. If you fall in this category like me–where you have used Git/GitHub in the past but would like a brief review–, then be sure to factor in time for this because it will hold up the time to deployment.</p>
-<p>In retrospect, I would do a quick Git/GitHub refresher by reading <a href="https://happygitwithr.com/">Happy Git With R</a> while drafting my blog post. If you start your blogdown project before creating a Git/GitHub repository for it, then I recommend doing like me &amp; following these <a href="https://happygitwithr.com/existing-github-last">steps to associate a pre-existing R project with Git/Github</a>.</p>
+<p><strong>In retrospect, I would do a quick Git/GitHub refresher by reading <a href="https://happygitwithr.com/">Happy Git With R</a> while drafting my blog post.</strong> If you start your blogdown project before creating a Git/GitHub repository for it, then I recommend doing like me &amp; following these <a href="https://happygitwithr.com/existing-github-last">steps to associate a pre-existing R project with Git/Github</a>.</p>
 </div>
 <div id="tip-6-approach-errors-as-learning-opportunities" class="section level3">
 <h3>Tip 6: Approach <code>ERRORS</code> as Learning Opportunities</h3>
@@ -71,14 +83,14 @@ image:
 .Ruserdata
 
 # ignore public directory
-public/</code></pre>
+public</code></pre>
 <p>After hours of futile google searches on error messages, I realized that my second mistake was misspecifying my Hugo version. Discovering the <code>blogdown::hugo_version()</code> command made me realize that my Hugo version was <code>0.52</code>, so I updated the Netlify <code>HUGO_VERSION</code> variable with the appropriate number.</p>
 <div class="figure">
 <img src="/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/02-deploy.png" />
 
 </div>
 <p>This final change resulted in deployment as expected, and I proceeded with selecting my domain name.</p>
-<p>The internet wasn’t built in a day and your blog probably won’t be either, so embrace the opportunities to learn &amp; grow along the way!</p>
+<p><strong>The internet wasn’t built in a day and your blog probably won’t be either, so embrace the opportunities to learn &amp; grow along the way!</strong></p>
 <div class="figure">
 <img src="/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/03-grow.png" />
 
