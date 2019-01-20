@@ -17,19 +17,19 @@ devtools::install_github("hadley/emo")
 [Blogdown: Creating Websites with R Markdown](https://bookdown.org/yihui/blogdown/) is an excellent manual on building websites with R. Therefore, this post won’t cover the technical aspects of creating a blog. Instead, I want to provide **a few tips for actually following through on your goal to blog** on a site created and maintained by yourself. 
 
 ### Tip 1: Draft Your Post
-![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/apple-keyboard-cactus-candle-947845.png)
+![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/01-apple-keyboard-cactus-candle-947845.png)
 If you want to start a blog, then I’m guessing that you have thoughts to share. So **get your ideas onto paper--or into a word processor**. 
 
 Building a site and documenting ideas are independent processes. Blogging is merely a means of _sharing_ ideas. When I first embarked upon this endeavor, I failed to register that creating a blog is meaningless if it doesn’t contain any content. 
 
-Therefore, drafting your first post before making a site provides motivation for conquering the latter.
+Drafting your first post before making a site provides motivation for conquering the latter.
 
 ### Tip 2: Read about Blogdown
-![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/blogdown_cover.png)
+![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/02-blogdown_cover.png)
 
 A good chef will tell you to read all steps before preparing a dish. Likewise, it is important to know the steps involved in creating a website before embarking upon the task. 
 
-There is no need to read Blogdown from cover to cover. However, **read the first few chapters to at least get a general sense** of the process, which can be generally summarized as:
+There is no need to read Blogdown from cover to cover. However, **read the first few chapters to at least get a general sense of the process**, which can be generally summarized as:
 
 1. Create a blogdown project  
 2. Select a Hugo theme   
@@ -37,9 +37,9 @@ There is no need to read Blogdown from cover to cover. However, **read the first
 4. Deploy   
 
 ### Tip 3: Use the Academic Theme
-![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/academic_theme.png)
+![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/03-academic_theme.png)
 
-As a visual learner, I desired an aesthetically pleasing website, and hugo has plenty of [themes](https://themes.gohugo.io/) that meet this criteria. Yet my lack of web design skills, limited to my selection to themes that have functioned properly on [pre-existing sites built with blogdown](https://awesome-blogdown.com/). 
+As a visual learner, I desired an aesthetically pleasing website, and Hugo has plenty of [themes](https://themes.gohugo.io/) that meet this criteria. Yet my lack of web design skills, limited to my selection to themes that have functioned properly on [pre-existing sites built with blogdown](https://awesome-blogdown.com/). 
 
 The academic theme immediately stood out to me because of its diversity in appearance as evidenced by the following blogs:   
 
@@ -63,10 +63,10 @@ Plus, the Academic Theme has [RStudio installation instructions](https://sourcet
 ### Tip 4: Determine Minimum Content for Launch
 For me this was publishing a blog post and completing my bio section. When I first started using the Academic theme, I wanted to explore all of the widgets that it had to offer and have everything precisely formatted to match my vision. However, focusing on minor issues like the placement of images and formatting turned into a suck of energy. 
 
-Therefore, **narrow in on the few areas that you deem necessary for a complete site and get this stuff done first**. Along the way, create a list of things you would like to learn that you can focus on after your site has been deployed.
+Therefore, **narrow in on the few areas that you deem necessary for a complete site and get this stuff done first**. Along the way, create a list of things you would like to learn and focus on after your site has been deployed.
 
 ###Tip 5: Gauge your Comfortability with Git/GitHub 
-![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/git.png)
+![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/04-git.png)
 
 Fortunately, the recommended workflow provided in the blogdown book has deployment instructions irregardless of your comfortability with Git/GitHub. Nevertheless, the book explicitly states that _It can be much easier to publish a website if you are familiar with Git and GitHub_, and this was the strategy that I desired for deployment. 
 
@@ -76,7 +76,7 @@ In spite of using Git/GitHub in the past, I felt as if I needed a quick refreshe
 
 ###Tip 6: Approach `ERRORS` as Learning Opportunities
 Hugo & Netlify are still very new to me, so it was intimidating when my first attempt at site deployment produced a list of ERROR messages. 
-![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/01-errors.png)
+![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/05-errors.png)
 I was initially overwhelmed in thinking about where to start since the main benefit of blogdown is the ability to create a Hugo site before mastering the ins and outs.
 
 However, I embraced this opportunity to learn, took a step back, and attempted to deploy the site by uploading the `public/` directory of the project to Netlify, which worked. 
@@ -97,13 +97,13 @@ public
 
 After hours of futile google searches on error messages, I realized that my second mistake was misspecifying my Hugo version. Discovering the `blogdown::hugo_version()`  command made me realize that my Hugo version was `0.52`, so I updated the Netlify `HUGO_VERSION` variable with the appropriate number.
 
-![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/02-deploy.png)
+![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/06-deploy.png)
 
 
 This final change resulted in deployment as expected, and I proceeded with selecting my domain name.
 
 **The internet wasn't built in a day and your blog probably won't be either, so embrace the opportunities to learn & grow along the way!**
 
-![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/03-grow.png)
+![](/post/2019-01-15-6-tips-to-avoiding-roadblocks-when-creating-your-first-blogdown-site_files/07-grow.png)
 
 
