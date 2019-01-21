@@ -29,4 +29,4 @@ weight = 50
 
 # Biography
 
-Letisha Smith recently graduated with her Master's in Applied Statistics from New York University. She currently works as a Sr. Database Analyst at NYU's School of Medicine. In 2018, the Royal Statistical Society recognized her with the Award for Statistical Excellence in Early Career Writing. 
+Letisha Smith recently graduated with her Master's in Applied Statistics from New York University. She currently works as a Sr. Database Analyst at NYU's School of Medicine. In 2018, the Royal Statistical Society recognized her with the [Award for Statistical Excellence in Early Career Writing](https://www.significancemagazine.com/culture/614-cooking-up-statistics-the-science-and-the-art). 
